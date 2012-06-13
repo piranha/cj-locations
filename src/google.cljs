@@ -12,7 +12,5 @@
 
 (defn init []
   (log "trying to initialize map")
-  (append!
-   (sel "head")
-   (set-attr! (single-node "<script></script>") "src" url)))
+  (.importScript_ js/goog url))
   
