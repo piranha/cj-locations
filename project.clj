@@ -6,11 +6,20 @@
                  [domina "1.0.0-beta4"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds
-              [{
-                :source-path "src"
-                :compiler {
-                           :output-to "build/locations.js"
-                           :optimizations :whitespace
-                           :pretty-print true
-                           }
-                }]})
+              {
+               :main {
+                      :source-path "src"
+                      :compiler {
+                                 :output-to "build/locations.js"
+                                 :optimizations :whitespace
+                                 :pretty-print true
+                                 }
+                      }
+               :mini {
+                      :source-path "src"
+                      :compiler {
+                                 :output-to "build/mini.js"
+                                 :optimizations :advanced
+                                 }
+                      }
+               }})
