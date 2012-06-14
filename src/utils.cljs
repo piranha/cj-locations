@@ -1,4 +1,8 @@
 (ns locations.utils)
 
 (defn log [& args]
-  (.log js/console (pr-str args)))
+  (.apply (.-log js/console) js/console
+          (into-array (map #(if (satisfies? cljs.core.ISeqable %)
+                              (pr-str %)
+                              %)
+                           args))))
