@@ -10,4 +10,7 @@
   (log "start!")
   (google/init "map"))
 
-(on :ready #(log "ready to go"))
+(on :ready
+    (fn []
+      (log "ready to go")
+      (google/set-city "Kiev, Ukraine")))

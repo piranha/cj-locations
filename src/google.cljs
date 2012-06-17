@@ -16,7 +16,9 @@
              el
              (js-obj "mapTypeId" google.maps.MapTypeId.ROADMAP)))
     (reset! coder (google.maps.Geocoder.))
-    (fire :ready "hehe")))
+    (reset! info (google.maps.InfoWindow.))
+    (fire :ready)))
+
 
 (defn init [el-id]
   (log "trying to initialize map")
@@ -26,4 +28,24 @@
         callback (gotApi el)
         errback #(log "error loading map api")]
     (.send request args callback errback)))
-  
+
+
+(defn find-location [address callback errback]
+  (log "query to geocoder...")
+  (.geocode @coder (js-obj "address" address)
+            (fn [results status]
+              (log "query done" status)
+              (condp = status
+                google.maps.GeocoderStatus.OK (callback results)
+                google.maps.GeocoderStatus.OVER_QUERY_LIMIT (errback "WAIT")
+                (errback status)))))
+
+(defn set-city [address]
+  (log "setting city" address)
+  (find-location address
+                 (fn [results]
+                   (let [point (first results)]
+                     (.setCenter @gmap point.geometry.location)
+                     (.setZoom @gmap 12)
+                     (.fitBounds @gmap point.geometry.viewport)))
+                 log))
