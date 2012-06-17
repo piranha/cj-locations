@@ -1,13 +1,13 @@
 (ns ^{:doc "Locations entry point"}
   locations.core
   (:use [locations.utils :only [log]]
-        [events :only [on]])
+        [events :only [on fire]])
   (:require [locations.google :as google]))
-            ;; [clojure.browser.repl :as repl]))
 
-(on :el-change #(log "interesting"))
+;;; Let the journey begin!
 
 (defn ^:export start []
   (log "start!")
-  (on :ready log)
-  (google/start "map"))
+  (google/init "map"))
+
+(on :ready #(log "ready to go"))

@@ -2,36 +2,28 @@
   locations.google
   (:use [locations.utils :only [log]]
         [events :only [on fire]])
-  (:require [clojure.browser.dom :as dom])
-  (:require-macros [enfocus.macros :as em]))
+  (:require [clojure.browser.dom :as dom]
+            [goog.net.Jsonp :as Jsonp]))
 
-(def state
-  {:el (atom nil)
-   :map (atom nil)
-   :coder (atom nil)
-   })
+(def gmap (atom nil))
+(def coder (atom nil))
+(def info (atom nil))
 
-(doseq [[key val] state]
-  (add-watch val nil
-             (fn [k r o n]
-               (fire (keyword (str (name key) "-change")) n))))
+(defn gotApi [el]
+  (fn []
+    (reset! gmap
+            (google.maps.Map.
+             el
+             (js-obj "mapTypeId" google.maps.MapTypeId.ROADMAP)))
+    (reset! coder (google.maps.Geocoder.))
+    (fire :ready "hehe")))
 
-(def url
-  "http://maps.google.com/maps/api/js?sensor=false&callback=locations.google.init")
-
-(defn start [el-id]
+(defn init [el-id]
   (log "trying to initialize map")
-  (reset! (state :el)
-          (dom/get-element el-id))
-  (.importScript_ js/goog url))
-
-(defn ^:export init []
-  (reset! (state :map)
-          (google.maps.Map.
-           @(state :el)
-           (js-obj "mapTypeId" google.maps.MapTypeId.ROADMAP)))
-  (reset! (state :coder)
-          (google.maps.Geocoder.))
-  (fire :ready "holy shit we are going in" "test")
-  (log "map initialized"))
+  (let [el (dom/get-element el-id)
+        request (goog.net.Jsonp. "http://maps.google.com/maps/api/js" "callback")
+        args (js-obj "sensor" false)
+        callback (gotApi el)
+        errback #(log "error loading map api")]
+    (.send request args callback errback)))
   
