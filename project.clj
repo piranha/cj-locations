@@ -21,6 +21,7 @@
                       :compiler {
                                  :output-to "build/mini.js"
                                  :optimizations :advanced
+                                 :externs ["externs/google_maps_api_v3_9.js"]
                                  }
                       }
                }})
