@@ -16,6 +16,14 @@
   (if (@handlers event)
     (swap! handlers update-in [event] disj handler)))
 
+(defn once
+  "Perform a handler once on a next event firing"
+  [event handler]
+  (defn- inner-handler [& args]
+    (apply handler args)
+    (off event inner-handler))
+  (on event inner-handler))
+
 (defn fire
   "Fire an event with payload"
   [event & payload]
