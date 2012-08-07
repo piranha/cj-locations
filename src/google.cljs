@@ -2,12 +2,13 @@
   locations.google
   (:use [locations.utils :only [log]]
         [events :only [on fire]]
-        [locations.map :only [Map init locate set-city]])
+        [locations.map :only [init locate set-city]])
   (:require [clojure.browser.dom :as dom]
+            [locations.map :as lmap]
             [goog.net.Jsonp :as Jsonp]))
 
 (defrecord Google [gmap coder info]
-  Map
+  lmap/Map
 
   (init [this el-id callback errback]
     (let [el (dom/get-element el-id)
