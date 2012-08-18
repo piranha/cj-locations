@@ -1,4 +1,4 @@
-(defproject cljs-stuff "0.0.1"
+(defproject locations "0.0.1"
   :description "Some stuff to play with"
   :plugins [[lein-cljsbuild "0.2.1"]]
   :dependencies [[org.clojure/clojure "1.4.0"]
