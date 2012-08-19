@@ -1,4 +1,4 @@
-(ns
+(ns ^{:doc "Common maps interface"}
     locations.map)
 
 (defprotocol Map

@@ -1,8 +1,7 @@
 (ns ^{:doc "Google Maps interface"}
   locations.google
   (:use-macros [locations.macros :only [doasync]])
-  (:use [locations.utils :only [log]]
-        [events :only [on fire]])
+  (:use [locations.utils :only [log]])
   (:require [clojure.browser.dom :as dom]
             [locations.map :as lmap]
             [goog.net.Jsonp :as Jsonp]))
@@ -18,16 +17,19 @@
       _ [.send request args]
       -gmap (google.maps.Map.
              el (js-obj "mapTypeId" google.maps.MapTypeId.ROADMAP))
+
+      ;; set properties
       _ (reset! gmap -gmap)
       _ (reset! coder (google.maps.Geocoder.))
       _ (reset! info (google.maps.InfoWindow.))
+
       _ (callback)]))
 
   (locate [this address callback]
     (doasync
      [args (js-obj "address" address)
       [results status] [.geocode @coder args]
-      _ (log "query done" status)
+      _ (log address "query done:" status)
       _ (case status
           google.maps.GeocoderStatus.OK (callback results)
           google.maps.GeocoderStatus.OVER_QUERY_LIMIT (throw "WAIT")
