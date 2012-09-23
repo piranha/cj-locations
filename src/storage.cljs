@@ -1,6 +1,6 @@
 (ns ^{:doc "Storage/notification system"}
   storage
-  (:refer-clojure :exclude [update-in assoc-in])
+  (:refer-clojure :exclude [update-in assoc-in get-in])
   (:use [locations.utils :only [log]])
   (:require [cljs.core :as cj]))
 
@@ -18,7 +18,7 @@
 (defn- notify
   [path value]
   (reduce (fn [dict path-element]
-            (let [inner (dict path-element)]
+            (let [inner (dict path-element {})]
               (doseq [f (inner :_handlers [])]
                 (f path value))
               inner))
@@ -33,5 +33,9 @@
 (defn update-in
   [path f & args]
   (apply swap! world cj/update-in path f args)
-  (let [value (get-in @world path)]
+  (let [value (get-in path)]
     (notify path value)))
+
+(defn get-in
+  [path]
+  (cj/get-in @world path))

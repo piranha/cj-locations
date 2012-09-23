@@ -31,7 +31,8 @@
 (defn ^:export start []
   ;; (repl/connect "http://localhost:9000/repl")
   (log "start!")
-  (s/assoc-in [:test] "preved")
+  (s/assoc-in [:test] {:id 1 :name "yo"})
+  (s/assoc-in [:test :name] "yo2")
   (doasync
    [guy (google/make)
     _ [m/init guy "map"]
@@ -40,5 +41,4 @@
     _ (listen! (sel "#search") :click (listener guy))]))
 
 (s/on [:test] (fn [path value]
-                (log (pr-str path))
-                (log value)))
+                (log (pr-str path) (pr-str value))))
