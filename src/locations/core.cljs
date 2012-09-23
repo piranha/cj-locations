@@ -33,6 +33,8 @@
   (log "start!")
   (s/assoc-in [:test] {:id 1 :name "yo"})
   (s/assoc-in [:test :name] "yo2")
+
+  (log (pr-str (s/find {:id 1} [{:id 1 :name "q"}])))
   (doasync
    [guy (google/make)
     _ [m/init guy "map"]
@@ -41,4 +43,4 @@
     _ (listen! (sel "#search") :click (listener guy))]))
 
 (s/on [:test] (fn [path value]
-                (log (pr-str path) (pr-str value))))
+                (log (pr-str path) ";;;" (pr-str value))))
