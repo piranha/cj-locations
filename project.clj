@@ -1,11 +1,16 @@
 (defproject locations "0.0.1"
   :description "Some stuff to play with"
-  :plugins [[lein-cljsbuild "0.2.1"]]
+  :extra-classpath-dirs ["deps/clojurescript/src/clj"
+                         "deps/clojurescript/src/cljs"]
+  :plugins [[lein-cljsbuild "0.2.7" :hooks false]]
   :dependencies [[org.clojure/clojure "1.4.0"]
+                 [com.cemerick/piggieback "0.0.2"]
                  ;; [enfocus "0.9.1-SNAPSHOT"]
-                 ;; [domina "1.0.0-beta4"]
+                 [domina "1.0.0"]
                  ]
-  :hooks [leiningen.cljsbuild]
+  :injections [(require 'cemerick.piggieback)]
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+  ;; :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds
               {
                :main {

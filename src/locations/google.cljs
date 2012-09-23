@@ -1,13 +1,13 @@
 (ns ^{:doc "Google Maps interface"}
   locations.google
   (:use-macros [locations.macros :only [doasync]])
-  (:use [locations.utils :only [log]])
+  (:use [locations.utils :only [log]]
+        [locations.map :only [Map locate]])
   (:require [clojure.browser.dom :as dom]
-            [locations.map :as lmap]
             [goog.net.Jsonp :as Jsonp]))
 
 (defrecord Google [gmap coder info]
-  lmap/Map
+  Map
 
   (init [this el-id callback]
     (doasync
@@ -35,13 +35,22 @@
           google.maps.GeocoderStatus.OVER_QUERY_LIMIT (throw "WAIT")
           (throw status))]))
 
-  (set-city [this address]
+  (add-mark [this title position]
+    (google.maps.Marker.
+     (js-obj "map" @gmap
+             "position" position
+             "title" title
+             "flat" true)))
+  
+  (set-city [this address callback]
     (doasync
-     [results [lmap/locate this address]
+     [results [locate this address]
       point (first results)
-      _ (.setCenter @gmap point.geometry.location)
+      geometry (.-geometry point)
+      _ (.setCenter @gmap (.-location geometry))
       _ (.setZoom @gmap 12)
-      _ (.fitBounds @gmap point.geometry.viewport)])))
+      _ (.fitBounds @gmap (.-viewport geometry))
+      _ (callback)])))
 
 (defn make []
   (->Google (atom nil) (atom nil) (atom nil)))

@@ -4,4 +4,5 @@
 (defprotocol Map
   (init [this el-id callback])
   (locate [this address callback])
-  (set-city [this address]))
+  (add-mark [this title position])
+  (set-city [this address callback]))

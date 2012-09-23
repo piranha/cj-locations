@@ -1,16 +1,44 @@
 (ns ^{:doc "Locations entry point"}
   locations.core
   (:use-macros [locations.macros :only [doasync]])
+
   (:use [locations.utils :only [log]]
-        [locations.map :only [init locate set-city]])
-  (:require [locations.google :as google]))
+        [domina.css :only [sel]]
+        [domina.events :only [listen! prevent-default]]
+        [domina :only [value]])
+
+  (:require [storage :as s]
+            [locations.google :as google]
+            [locations.map :as m]
+            [clojure.browser.repl :as repl]))
 
 ;;; Let the journey begin!
 
+(defn get-places []
+  (-> (sel "#locations")
+                 (value)
+                 (.split "\n")))
+
+(defn listener [guy]
+  (fn [evt]
+    (prevent-default evt)
+    (doseq [place (get-places)]
+      (doasync
+       [results [m/locate guy place]
+        position (-> (first results) (.-geometry) (.-location))
+        _ (m/add-mark guy place position)]))))
+
 (defn ^:export start []
+  ;; (repl/connect "http://localhost:9000/repl")
   (log "start!")
+  (s/assoc-in [:test] "preved")
   (doasync
    [guy (google/make)
-    _ [init guy "map"]
+    _ [m/init guy "map"]
     _ (log "map initialized")
-    _ (set-city guy "Kiev, Ukraine")]))
+    _ [m/set-city guy "Kiev, Ukraine"]
+    _ (listen! (sel "#search") :click (listener guy))]))
+
+(s/on [:test] (fn [path value]
+                (log (pr-str path))
+                (log value)))
