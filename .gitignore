@@ -2,3 +2,5 @@
 /build/*.js
 .lein*/
 /deps/
+/.repl/
+/out/

@@ -1,10 +1,10 @@
 (ns ^{:doc "Google Maps interface"}
   locations.google
   (:use-macros [locations.macros :only [doasync]])
-  (:use [locations.utils :only [log]]
-        [locations.map :only [Map locate]])
   (:require [clojure.browser.dom :as dom]
-            [goog.net.Jsonp :as Jsonp]))
+            [goog.net.Jsonp :as Jsonp]
+            [locations.utils :refer [log]]
+            [locations.map :refer [Map locate]]))
 
 (defrecord Google [gmap coder info]
   Map

@@ -9,3 +9,6 @@
 (defn log [& args]
   (.apply (.-log js/console) js/console
           (into-array (map to-string args))))
+
+(defn oget [obj path]
+  (reduce #(aget %1 %2) obj path))
